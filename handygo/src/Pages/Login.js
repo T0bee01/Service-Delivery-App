@@ -1,7 +1,13 @@
 import React from "react";
 
-function Login() {
-  return <h1>Login Page</h1>;
-}
+const Login = () => {
+  return (
+    <div>
+      <h1>Login Page</h1>
+      <p>Welcome to HandyBEE! Please log in.</p>
+    </div>
+  );
+};
 
 export default Login;
+

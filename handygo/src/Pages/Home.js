@@ -1,12 +1,18 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+function Home() {
+  const navigate = useNavigate();
+
   return (
-    <div style={{ textAlign: "center", padding: "50px" }}>
-      <h1>Welcome to HandyGo</h1>
-      <p>Your one-stop solution for home services and repairs.</p>
+    <div className="home-container">
+      <h1>Welcome to HandyBEE</h1>
+      <div className="auth-options">
+        <button onClick={() => navigate("/login")}>Login</button>
+        <button onClick={() => navigate("/signup")}>Signup</button>
+      </div>
     </div>
   );
-};
+}
 
 export default Home;

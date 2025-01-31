@@ -1,82 +1,73 @@
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import React, { useEffect, useState } from "react";
+import "./SplashScreen.css";
 
-const generateBubbles = () => {
-  return new Array(20).fill(0).map((_, i) => ({
+const generateBubbles = (count = 25) => {
+  return Array.from({ length: count }, (_, i) => ({
     id: i,
-    size: Math.random() * 40 + 20,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    duration: Math.random() * 3 + 2,
-  }));
-};
-
-const generateBees = () => {
-  return new Array(5).fill(0).map((_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
+    size: Math.random() * 60 + 10,
+    x: Math.random() * 90,
+    y: Math.random() * 90,
     duration: Math.random() * 4 + 3,
   }));
 };
 
 const SplashScreen = ({ onAnimationComplete }) => {
-  const [bubbles, setBubbles] = useState(generateBubbles());
-  const [bees, setBees] = useState(generateBees());
+  const [bubbles] = useState(generateBubbles());
   const [showLogo, setShowLogo] = useState(false);
+  const logoControls = useAnimation();
 
   useEffect(() => {
-    const logoTimeout = setTimeout(() => {
+    const sequence = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setShowLogo(true);
-    }, 5000);
+      await logoControls.start({ scale: 1, opacity: 1 });
 
-    const animationTimeout = setTimeout(() => {
-      onAnimationComplete();
-    }, 7000);
-
-    return () => {
-      clearTimeout(logoTimeout);
-      clearTimeout(animationTimeout);
+      setTimeout(() => {
+        if (onAnimationComplete) onAnimationComplete();
+      }, 3500);
     };
-  }, [onAnimationComplete]);
+
+    sequence();
+  }, [onAnimationComplete, logoControls]);
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden flex justify-center items-center">
+    <div className="splash-container">
+      {/* Floating Bubbles */}
       {bubbles.map((bubble) => (
         <motion.div
           key={bubble.id}
-          className="absolute bg-blue-300 opacity-50 rounded-full"
+          className="bubble"
           style={{
             width: `${bubble.size}px`,
             height: `${bubble.size}px`,
             top: `${bubble.y}%`,
             left: `${bubble.x}%`,
           }}
-          animate={{ y: [bubble.y + 20, bubble.y - 20], opacity: [1, 0.5, 1] }}
-          transition={{ duration: bubble.duration, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ y: ["100%", "-100%"], opacity: [1, 0] }}
+          transition={{ duration: bubble.duration, ease: "linear", repeat: Infinity }}
         />
       ))}
 
-      {bees.map((bee) => (
-        <motion.div
-          key={bee.id}
-          className="absolute w-10 h-10"
-          style={{ top: `${bee.y}%`, left: `${bee.x}%` }}
-          animate={{ x: [bee.x + 10, bee.x - 10], y: [bee.y + 10, bee.y - 10] }}
-          transition={{ duration: bee.duration, repeat: Infinity, ease: "easeInOut" }}
-        >
-          🐝
-        </motion.div>
-      ))}
-
+      {/* HandyBEE Logo */}
       {showLogo && (
         <motion.div
-          className="absolute flex justify-center items-center w-32 h-32 bg-orange-500 rounded-full"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
+          className="logo-container"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <span className="text-white text-2xl font-bold">HandyBEE</span>
+          <div className="orange-circle">
+            <div className="black-circle">
+              <span className="logo-text">
+                HandyB
+                <span className="orange-circle-small">
+                  <span className="special-e">E</span>
+                </span>
+                E
+              </span>
+            </div>
+          </div>
         </motion.div>
       )}
     </div>
